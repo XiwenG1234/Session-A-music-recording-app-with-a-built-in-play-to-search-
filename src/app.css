@@ -13,7 +13,7 @@ main {
 }
 
 h1 {
-  color: #335d92;
+  color: #a30cee;
   text-transform: uppercase;
   font-size: 4rem;
   font-weight: 100;
@@ -36,4 +36,71 @@ p {
   p {
     max-width: none;
   }
+}
+
+/* Added three-section layout styles */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+.three-sections-root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: rgb(233, 129, 129);
+  font-weight: 600;
+}
+
+.section.top {
+  height: calc(100vh / 8); /* 1/6 */
+  background: rgba(208, 226, 238, 0.6); /* teal */
+}
+
+.section.middle {
+  height: calc((100vh * 3) / 4); /* 4/6 == 2/3 */
+  background:rgba(176, 207, 227, 0.789);; /* blue */
+  flex-direction: column;
+}
+
+.section.bottom {
+  height: calc(100vh / 8); /* 1/6 */
+  background: rgba(208, 226, 238, 0.6); /* red */
+}
+
+.top-links a {
+  margin: 0 0.5rem;
+  color: rgb(0, 0, 0);
+  text-decoration: none;
+}
+
+.audioRecorder {
+  position: relative;   /* allows movement with top/left */
+  top: 50px;            /* move down 50px */
+  left: 30px;           /* move right 30px */
+  text-align: center;   /* center horizontally */
+  font-size: 2rem;
+  color: rgb(0, 0, 0);
+}
+
+.top-left-title {
+  position: absolute;   /* allows precise positioning */
+  top: 10px;            /* distance from top edge */
+  left: 15px;           /* distance from left edge */
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: rgb(0, 0, 0);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* ensure the top section is relative for the absolute position to work */
+.section.top {
+  position: relative;
 }

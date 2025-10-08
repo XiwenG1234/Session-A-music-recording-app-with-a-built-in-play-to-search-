@@ -3,6 +3,7 @@ import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
 import "./app.css";
+import ThreeSections from "./components/ThreeSections";
 
 export default function App() {
   return (
@@ -10,9 +11,13 @@ export default function App() {
       root={props => (
         <MetaProvider>
           <Title>SolidStart - Basic</Title>
-          <a href="/">Index</a>
-          <a href="/about">About</a>
-          <Suspense>{props.children}</Suspense>
+          <ThreeSections>
+            <nav className="top-links">
+              <a href="/">Search</a>
+              <a href="/about">MyAudio</a>
+            </nav>
+            <Suspense>{props.children}</Suspense>
+          </ThreeSections>
         </MetaProvider>
       )}
     >
@@ -20,3 +25,4 @@ export default function App() {
     </Router>
   );
 }
+
