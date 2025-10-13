@@ -4,6 +4,7 @@ import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
 import "./app.css";
 import ThreeSections from "./components/ThreeSections";
+import HeaderBar from "./components/HeaderBar";
 
 export default function App() {
   return (
@@ -12,11 +13,11 @@ export default function App() {
         <MetaProvider>
           <Title>SolidStart - Basic</Title>
           <ThreeSections>
-            <nav className="top-links">
-              <a href="/">Search</a>
-              <a href="/about">MyAudio</a>
-            </nav>
+            <HeaderBar />
             <Suspense>{props.children}</Suspense>
+            <div>
+              <button className="record-button" aria-label="record">●</button>
+            </div>
           </ThreeSections>
         </MetaProvider>
       )}
