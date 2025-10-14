@@ -5,6 +5,8 @@ import { Suspense } from "solid-js";
 import "./app.css";
 import ThreeSections from "./components/ThreeSections";
 import HeaderBar from "./components/HeaderBar";
+import RecorderButton from "./components/RecorderButton";
+import Toasts from "./components/Toasts";
 
 export default function App() {
   return (
@@ -16,9 +18,10 @@ export default function App() {
             <HeaderBar />
             <Suspense>{props.children}</Suspense>
             <div>
-              <button className="record-button" aria-label="record">●</button>
+              <RecorderButton />
             </div>
           </ThreeSections>
+          <Toasts />
         </MetaProvider>
       )}
     >

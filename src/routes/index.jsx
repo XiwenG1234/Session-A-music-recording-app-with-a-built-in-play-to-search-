@@ -1,19 +1,11 @@
 import { Title } from "@solidjs/meta";
 import { createSignal, For, createMemo } from "solid-js";
 import { query } from "~/stores/search";
+import { entries, setEntries } from "~/stores/entries";
 import AudioEntry from "~/components/AudioEntry";
 
-const initialEntries = [
-  { id: 1, title: "blah #1", date: "9/24" },
-  { id: 2, title: "notes", date: "9/24" },
-  { id: 3, title: "meeting", date: "6/15" },
-];
 
 export default function Home() {
-  // use shared query from HeaderBar
-  // local `query` variable kept for backwards compatibility in this file
-  const [entries, setEntries] = createSignal(initialEntries);
-
   function handleDelete(id) {
     setEntries(entries().filter(e => e.id !== id));
   }
@@ -21,8 +13,11 @@ export default function Home() {
   function handleDownload(id) {
     const item = entries().find(e => e.id === id);
     if (!item) return;
-    // For now AudioEntry provides a default download; this is a placeholder
     console.log("download", id, item.title);
+  }
+
+  function handleRename(id, newTitle) {
+    setEntries(entries().map(e => e.id === id ? { ...e, title: newTitle } : e));
   }
 
   const filtered = createMemo(() => {
@@ -31,30 +26,31 @@ export default function Home() {
     return entries().filter(e => e.title.toLowerCase().includes(q));
   });
 
+  const groups = createMemo(() => {
+    const list = filtered();
+    const map = new Map();
+    list.forEach(e => {
+      const key = e.date || 'Unknown';
+      if (!map.has(key)) map.set(key, []);
+      map.get(key).push(e);
+    });
+    // return array of [date, items], sorted by date descending
+    return Array.from(map.entries()).sort((a, b) => (a[0] < b[0] ? 1 : -1));
+  });
+
   return (
     <main class="home-root">
       <Title>Search</Title>
-
-      {/* search input lives in the HeaderBar (top section) */}
-
-      <section class="date-group">
-        <h3>9/24</h3>
-        <For each={filtered().filter(e => e.date === '9/24')} fallback={<div class="muted">No results</div>}>
-          {(entry) => <AudioEntry id={entry.id} title={entry.title} onDelete={handleDelete} onDownload={handleDownload} />}
-        </For>
-        <div class="text-input-placeholder" />
-        <div class="upload-box">drag & drop to upload</div>
-      </section>
-
-      <section class="date-group">
-        <h3>6/15</h3>
-        <For each={filtered().filter(e => e.date === '6/15')} fallback={<div class="muted">No results</div>}>
-          {(entry) => <AudioEntry id={entry.id} title={entry.title} onDelete={handleDelete} onDownload={handleDownload} />}
-        </For>
-        <div class="text-input-placeholder" />
-      </section>
-
-      {/* record button moved to layout footer */}
+      <For each={groups()} fallback={<div class="muted">No recordings</div>}>
+        {([date, items]) => (
+          <section class="date-group">
+            <h3>{date}</h3>
+            <For each={items} fallback={<div class="muted">No results</div>}>
+              {(entry) => <AudioEntry id={entry.id} title={entry.title} blobUrl={entry.blobUrl} onDelete={handleDelete} onDownload={handleDownload} onRename={handleRename} />}
+            </For>
+          </section>
+        )}
+      </For>
     </main>
   );
 }

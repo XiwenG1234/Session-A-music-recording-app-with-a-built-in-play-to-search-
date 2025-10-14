@@ -318,3 +318,46 @@ html, body, #root {
   font-size: 1.4rem;
   color: white;
 }
+
+.recording { position: relative; box-shadow: 0 0 0 rgba(74,111,179,0.3); }
+.recording::after {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: -8px;
+  right: -8px;
+  bottom: -8px;
+  border-radius: 50%;
+  background: rgba(74,111,179,0.08);
+  animation: pulse 1.4s infinite;
+}
+
+.recording-indicator { margin-top: 6px; color: var(--text); font-size: 0.9rem }
+
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.6 }
+  70% { transform: scale(1.05); opacity: 0.15 }
+  100% { transform: scale(0.95); opacity: 0.6 }
+}
+
+.player audio { width: 220px; height: 28px }
+
+/* Toast styles */
+.toasts-root {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 60;
+}
+
+.toast {
+  background: rgba(31,41,55,0.95);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(31,41,55,0.12);
+  font-size: 0.95rem;
+}
