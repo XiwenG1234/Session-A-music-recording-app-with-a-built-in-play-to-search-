@@ -208,6 +208,32 @@ html, body, #root {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.play-search:hover {
+  background: var(--muted);
+  border-color: var(--accent);
+}
+
+.upload-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--bg);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upload-btn:hover {
+  background: var(--muted);
+  border-color: var(--accent);
 }
 
 .date-group h3 {

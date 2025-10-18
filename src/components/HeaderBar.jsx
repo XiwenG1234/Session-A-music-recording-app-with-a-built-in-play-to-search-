@@ -1,6 +1,7 @@
 import { query, setQuery } from "~/stores/search";
 import { startRecording, stopRecording, isRecording, duration } from "~/stores/recorder";
 import { createSignal } from "solid-js";
+import FileUploadButton from "~/components/FileUpload";
 
 export default function HeaderBar() {
   const [local, setLocal] = createSignal(query());
@@ -30,6 +31,7 @@ export default function HeaderBar() {
             <path d="M12 19v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
+        <FileUploadButton />
       </div>
     </div>
   );

@@ -105,7 +105,6 @@ export default function AudioEntry(props) {
         {props.blobUrl && (
           <div class="player">
             <audio ref={setAudioRef} src={props.blobUrl} onplay={() => setPlaying(true)} onpause={() => setPlaying(false)} controls />
-            <button class="play-toggle" onClick={togglePlay} aria-pressed={playing()}>{playing() ? 'Pause' : 'Play'}</button>
           </div>
         )}
       </div>
