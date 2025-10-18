@@ -9,8 +9,10 @@ export default function ThreeSections(props) {
 
   return (
     <div class="three-sections-root">
-      <header class="section top">{nav}</header>
-      <div class="top-left-title">Session</div>
+      <header class="section top">
+        <div class="top-left-title">Session</div>
+        {nav}
+      </header>
       <main class="section middle">
         <div class="middle-inner">{main}</div>
       </main>
