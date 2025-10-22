@@ -6,7 +6,6 @@ export default function FileUploadButton() {
   let fileInputRef;
 
   const handleFiles = async (files) => {
-    // Accept common audio files
     const audioExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.aac', '.flac', '.webm', '.opus'];
     const audioFiles = Array.from(files).filter(file => {
       const hasAudioType = file.type.startsWith('audio/');
