@@ -55,6 +55,13 @@ export default function AudioEntry(props) {
     setOpen(!open());
   }
 
+  function toggleStar(e) {
+    e.stopPropagation();
+    if (props.onToggleStar) {
+      props.onToggleStar(props.id);
+    }
+  }
+
   function handleDownload() {
     if (props.onDownload) {
       props.onDownload(props.id);
@@ -112,6 +119,14 @@ export default function AudioEntry(props) {
   return (
     <div class="audio-entry" ref={root}>
       <div class="entry-left">
+        <button 
+          class="star-btn" 
+          onClick={toggleStar}
+          aria-label={props.starred ? "Unstar recording" : "Star recording"}
+        >
+          {props.starred ? "★" : "☆"}
+        </button>
+        
         {!editing() ? (
           <>
             <div class="entry-title">{props.title}</div>

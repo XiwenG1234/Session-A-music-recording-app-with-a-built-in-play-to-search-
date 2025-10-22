@@ -40,12 +40,39 @@ export default function Home() {
     setEntries(entries().map(e => e.id === id ? { ...e, title: newTitle } : e));
   }
 
+  function handleToggleStar(id) {
+    setEntries(entries().map(e => 
+      e.id === id ? { ...e, starred: !e.starred } : e
+    ));
+  }
+/*
   const filtered = createMemo(() => {
     if (!isClient()) return [];
     const q = query().trim().toLowerCase();
     if (!q) return entries();
     return entries().filter(e => e.title.toLowerCase().includes(q));
   });
+  */
+  const filtered = createMemo(() => {
+  const q = query().trim().toLowerCase();
+  let list = entries();
+  
+  // Apply search filter
+  if (q) {
+    list = list.filter(e => e.title.toLowerCase().includes(q));
+  }
+  
+  // If starred mode is on, sort starred items to the top
+  if (showStarredOnly()) {
+    list = [...list].sort((a, b) => {
+      if (a.starred && !b.starred) return -1;
+      if (!a.starred && b.starred) return 1;
+      return 0;
+    });
+  }
+  
+  return list;
+});
 
   const groups = createMemo(() => {
     if (!isClient()) return [];
