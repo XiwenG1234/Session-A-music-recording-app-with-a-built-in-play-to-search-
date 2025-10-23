@@ -1,44 +1,10 @@
-import { createSignal, onMount, onCleanup, createMemo } from "solid-js";
-import { getAudioById } from "~/database/audioDB";
+import { createSignal, onMount, onCleanup } from "solid-js";
 
 export default function AudioEntry(props) {
   let root;
   const [open, setOpen] = createSignal(false);
   const [playing, setPlaying] = createSignal(false);
-  const [blobUrl, setBlobUrl] = createSignal(null);
   let audioEl = null;
-
-  onMount(async () => {
-    if (props.dbId && !props.blobUrl) {
-      try {
-        const audioData = await getAudioById(props.dbId);
-        if (audioData && audioData.blob) {
-          const url = URL.createObjectURL(audioData.blob);
-          setBlobUrl(url);
-        }
-      } catch (error) {
-        console.error('Failed to load audio blob:', error);
-      }
-    } else if (props.blobUrl) {
-      setBlobUrl(props.blobUrl);
-    }
-
-    const onDoc = (e) => {
-      if (!root.contains(e.target)) setOpen(false);
-    };
-    document.addEventListener("click", onDoc);
-    
-    return () => {
-      document.removeEventListener("click", onDoc);
-    };
-  });
-  
-  onCleanup(() => {
-    const url = blobUrl();
-    if (url) {
-      URL.revokeObjectURL(url);
-    }
-  });
 
   function setAudioRef(el) {
     audioEl = el;
@@ -66,10 +32,9 @@ export default function AudioEntry(props) {
     if (props.onDownload) {
       props.onDownload(props.id);
     } else {
-      const url = blobUrl();
-      if (url) {
+      if (props.blobUrl) {
         const a = document.createElement("a");
-        a.href = url;
+        a.href = props.blobUrl;
         a.download = `${props.title || "recording"}.webm`;
         document.body.appendChild(a);
         a.click();
@@ -116,6 +81,14 @@ export default function AudioEntry(props) {
     setEditing(false);
   }
 
+  onMount(() => {
+    const onDoc = (e) => {
+      if (!root.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("click", onDoc);
+    onCleanup(() => document.removeEventListener("click", onDoc));
+  });
+
   return (
     <div class="audio-entry" ref={root}>
       <div class="entry-left">
@@ -144,15 +117,9 @@ export default function AudioEntry(props) {
             <button class="menu-item" onClick={cancelRename}>Cancel</button>
           </div>
         )}
-        {blobUrl() && (
+        {props.blobUrl && (
           <div class="player">
-            <audio 
-              ref={setAudioRef} 
-              src={blobUrl()} 
-              onplay={() => setPlaying(true)} 
-              onpause={() => setPlaying(false)} 
-              controls 
-            />
+            <audio ref={setAudioRef} src={props.blobUrl} onplay={() => setPlaying(true)} onpause={() => setPlaying(false)} controls />
           </div>
         )}
       </div>

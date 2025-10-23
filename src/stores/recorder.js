@@ -1,7 +1,6 @@
 import { createSignal } from "solid-js";
 import { entries, setEntries } from "~/stores/entries";
 import { addToast } from "~/stores/toast";
-import { addAudio } from "~/database/audioDB";
 
 let mediaRecorder = null;
 let mediaStream = null;
@@ -36,34 +35,16 @@ export async function startRecording() {
 
 export function stopRecording() {
   if (!mediaRecorder) return;
-  mediaRecorder.onstop = async () => {
+  mediaRecorder.onstop = () => {
     const blob = new Blob(chunks, { type: 'audio/webm' });
-    
-    try {
-      const dbId = await addAudio({
-        blob: blob,
-        name: `Recording ${new Date().toLocaleTimeString()}`,
-        intervalHashes: [] 
-      });
-      
-      const id = Date.now();
-      const title = `Recording ${new Date().toLocaleTimeString()}`;
-      const date = new Date().toLocaleDateString();
-      
-      setEntries([{ 
-        id, 
-        title, 
-        date, 
-        blobUrl: null,
-        dbId: dbId,
-        timestamp: Date.now()
-      }, ...entries()]);
-      
-      addToast('Recording saved');
-    } catch (error) {
-      console.error('Failed to save recording:', error);
-      addToast('Failed to save recording');
-    }
+    const url = URL.createObjectURL(blob);
+    setLastBlobUrl(url);
+
+    const id = Date.now();
+    const title = `Recording ${new Date().toLocaleTimeString()}`;
+    const date = new Date().toLocaleDateString();
+  setEntries([{ id, title, date, blobUrl: url }, ...entries()]);
+  addToast('Recording saved');
 
     // stop all tracks
     if (mediaStream) {

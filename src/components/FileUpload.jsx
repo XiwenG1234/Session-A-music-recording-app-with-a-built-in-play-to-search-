@@ -1,11 +1,11 @@
 import { entries, setEntries } from "~/stores/entries";
 import { addToast } from "~/stores/toast";
-import { addAudio } from "~/database/audioDB";
 
 export default function FileUploadButton() {
   let fileInputRef;
 
-  const handleFiles = async (files) => {
+  const handleFiles = (files) => {
+    // Accept commmon audio files
     const audioExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.aac', '.flac', '.webm', '.opus'];
     const audioFiles = Array.from(files).filter(file => {
       const hasAudioType = file.type.startsWith('audio/');
@@ -19,31 +19,14 @@ export default function FileUploadButton() {
       return;
     }
 
-    for (const file of audioFiles) {
-      try {
-        const dbId = await addAudio({
-          blob: file,
-          name: file.name.replace(/\.[^/.]+$/, ""),
-          intervalHashes: []
-        });
-        
-        const id = Date.now() + Math.random();
-        const title = file.name.replace(/\.[^/.]+$/, "");
-        const date = new Date().toLocaleDateString();
-        
-        setEntries([{ 
-          id, 
-          title, 
-          date, 
-          blobUrl: null, // Loads blobUrl from IndexedDB
-          dbId: dbId,
-          timestamp: Date.now()
-        }, ...entries()]);
-      } catch (error) {
-        console.error('Failed to save uploaded file:', error);
-        addToast(`Failed to save ${file.name}`);
-      }
-    }
+    audioFiles.forEach(file => {
+      const url = URL.createObjectURL(file);
+      const id = Date.now() + Math.random(); // ensure unique ID
+      const title = file.name.replace(/\.[^/.]+$/, ""); // removes the extension
+      const date = new Date().toLocaleDateString();
+      
+      setEntries([{ id, title, date, blobUrl: url }, ...entries()]);
+    });
 
     addToast(`Uploaded ${audioFiles.length} file${audioFiles.length > 1 ? 's' : ''}`);
   };
