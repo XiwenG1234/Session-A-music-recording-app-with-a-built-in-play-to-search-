@@ -13,18 +13,21 @@ export default function Home() {
     setMounted(true);
   });
 
-  function handleDelete(id) {
+  async function handleDelete(id) {
     const item = entries().find(e => e.id === id);
     if (!item) return;
     
     try {
+      // Delete from IndexedDB first
       if (item.dbId) {
-        deleteAudioById(item.dbId);
+        await deleteAudioById(item.dbId);
       }
       
+  
       if (item.blobUrl) {
         URL.revokeObjectURL(item.blobUrl);
       }
+     
       setEntries(entries().filter(e => e.id !== id));
     } catch (error) {
       console.error('Failed to delete recording:', error);
