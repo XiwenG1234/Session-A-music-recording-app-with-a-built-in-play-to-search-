@@ -7,6 +7,7 @@ import { deleteAudioById } from "~/database/audioDB";
 
 export default function Home() {
   const [mounted, setMounted] = createSignal(false);
+  const [showStarredOnly, setShowStarredOnly] = createSignal(false);
 
   createEffect(() => {
     setMounted(true);
@@ -102,9 +103,11 @@ export default function Home() {
                       title={entry.title} 
                       blobUrl={entry.blobUrl} 
                       dbId={entry.dbId}
+                      starred={entry.starred}
                       onDelete={handleDelete} 
                       onDownload={handleDownload} 
-                      onRename={handleRename} 
+                      onRename={handleRename}
+                      onToggleStar={handleToggleStar}
                     />
                   )}
                 </For>
