@@ -3,7 +3,7 @@ import { createSignal, For, createMemo, onCleanup, Show, createEffect } from "so
 import { query } from "~/stores/search";
 import { entries, setEntries, isLoaded, isClient } from "~/stores/entries";
 import AudioEntry from "~/components/AudioEntry";
-import { deleteAudioById } from "~/database/audioDB";
+import { deleteAudioById, updateAudio } from "~/database/audioDB";
 
 export default function Home() {
   const [mounted, setMounted] = createSignal(false);
@@ -37,14 +37,42 @@ export default function Home() {
     console.log("download", id, item.title);
   }
 
-  function handleRename(id, newTitle) {
+  async function handleRename(id, newTitle) {
+    const item = entries().find(e => e.id === id);
+    if (!item) return;
+    
+    // Update in-memory state
     setEntries(entries().map(e => e.id === id ? { ...e, title: newTitle } : e));
+    
+    // Persist to IndexedDB
+    if (item.dbId) {
+      try {
+        await updateAudio(item.dbId, { name: newTitle });
+      } catch (error) {
+        console.error('Failed to update recording name:', error);
+      }
+    }
   }
 
-  function handleToggleStar(id) {
+  async function handleToggleStar(id) {
+    const item = entries().find(e => e.id === id);
+    if (!item) return;
+    
+    const newStarredState = !item.starred;
+    
+    // Update in-memory state
     setEntries(entries().map(e => 
-      e.id === id ? { ...e, starred: !e.starred } : e
+      e.id === id ? { ...e, starred: newStarredState } : e
     ));
+    
+    // Persist to IndexedDB
+    if (item.dbId) {
+      try {
+        await updateAudio(item.dbId, { starred: newStarredState });
+      } catch (error) {
+        console.error('Failed to update starred state:', error);
+      }
+    }
   }
 /*
   const filtered = createMemo(() => {

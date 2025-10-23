@@ -19,7 +19,8 @@ if (typeof window !== 'undefined') {
         date: new Date(file.timestamp).toLocaleDateString(),
         blobUrl: null,
         dbId: file.id,
-        timestamp: file.timestamp
+        timestamp: file.timestamp,
+        starred: file.starred || false
       }));
       
       console.log('Mapped entries:', loadedEntries);

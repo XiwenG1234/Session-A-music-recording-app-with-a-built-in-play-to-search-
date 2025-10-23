@@ -102,6 +102,29 @@ export function getAudioById(id) {
     });
 }
 
+export function updateAudio(id, updates) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const store = await getStore("readwrite");
+            const getReq = store.get(id);
+            getReq.onsuccess = () => {
+                const data = getReq.result;
+                if (!data) {
+                    reject(new Error("Audio not found"));
+                    return;
+                }
+                const updatedData = { ...data, ...updates };
+                const putReq = store.put(updatedData);
+                putReq.onsuccess = () => resolve(true);
+                putReq.onerror = () => reject(putReq.error);
+            };
+            getReq.onerror = () => reject(getReq.error);
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
+
 export function deleteAudioById(id) {
     return new Promise(async (resolve, reject) => {
         try {
