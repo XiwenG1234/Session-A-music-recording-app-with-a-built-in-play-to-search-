@@ -34,12 +34,6 @@ export default function Home() {
     }
   }
 
-  function handleDownload(id) {
-    const item = entries().find(e => e.id === id);
-    if (!item) return;
-    console.log("download", id, item.title);
-  }
-
   async function handleRename(id, newTitle) {
     const item = entries().find(e => e.id === id);
     if (!item) return;
@@ -136,7 +130,6 @@ export default function Home() {
                       dbId={entry.dbId}
                       starred={entry.starred}
                       onDelete={handleDelete} 
-                      onDownload={handleDownload} 
                       onRename={handleRename}
                       onToggleStar={handleToggleStar}
                     />

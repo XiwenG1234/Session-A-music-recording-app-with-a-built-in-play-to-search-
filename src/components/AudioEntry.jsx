@@ -62,33 +62,6 @@ export default function AudioEntry(props) {
     }
   }
 
-  function handleDownload() {
-    if (props.onDownload) {
-      props.onDownload(props.id);
-    } else {
-      const url = blobUrl();
-      if (url) {
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${props.title || "recording"}.webm`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      } else {
-        const blob = new Blob([`Recording: ${props.title}`], { type: "text/plain" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${props.title || "recording"}.txt`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-      }
-    }
-    setOpen(false);
-  }
-
   function handleDelete() {
     if (props.onDelete) props.onDelete(props.id);
     else console.log("delete", props.id);
@@ -161,7 +134,6 @@ export default function AudioEntry(props) {
         <button class="dots-btn" aria-haspopup="true" aria-expanded={open()} onClick={toggleMenu} aria-label="options">⋯</button>
         {open() && (
           <div class="entry-menu" role="menu">
-            <button class="menu-item" onClick={handleDownload} role="menuitem">Download</button>
             <button class="menu-item" onClick={startRename} role="menuitem">Rename</button>
             <button class="menu-item" onClick={handleDelete} role="menuitem">Delete</button>
           </div>
