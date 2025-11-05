@@ -62,7 +62,7 @@ export default function FileUploadButton() {
   };
 
   return (
-    <>
+    <div class="tooltip-wrapper">
       <input
         ref={fileInputRef}
         type="file"
@@ -82,6 +82,7 @@ export default function FileUploadButton() {
           <path d="M12 3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
-    </>
+      <span class="tooltip">Upload Audio Files</span>
+    </div>
   );
 }
