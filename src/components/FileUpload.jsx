@@ -37,7 +37,8 @@ export default function FileUploadButton() {
           date, 
           blobUrl: null, // Loads blobUrl from IndexedDB
           dbId: dbId,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          archived: false
         }, ...entries()]);
       } catch (error) {
         console.error('Failed to save uploaded file:', error);

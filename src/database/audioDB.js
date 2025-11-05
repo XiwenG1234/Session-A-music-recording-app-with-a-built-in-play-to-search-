@@ -26,6 +26,7 @@ function initDB() {
 
         objectStore.createIndex("nameIndex", "name", { unique: false });
         objectStore.createIndex("intervalHashes", "intervalHashes", { unique: false, multiEntry: true });
+        objectStore.createIndex("archivedIndex", "archived", { unique: false });
       }
     };
 
@@ -65,7 +66,8 @@ export function addAudio({ blob, name = null, intervalHashes = [] }) {
                 blob,                 
                 name,                 
                 intervalHashes,       // interval hashes(once the algorithm is connected)
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                archived: false       // new entries are not archived by default
             };
             const req = store.add(data);
             req.onsuccess = () => resolve(req.result);

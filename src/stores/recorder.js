@@ -56,7 +56,8 @@ export function stopRecording() {
         date, 
         blobUrl: null,
         dbId: dbId,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        archived: false
       }, ...entries()]);
       
       addToast('Recording saved');
