@@ -4,6 +4,7 @@ import { query } from "~/stores/search";
 import { entries, setEntries, isLoaded, isClient } from "~/stores/entries";
 import AudioEntry from "~/components/AudioEntry";
 import { deleteAudioById, updateAudio } from "~/database/audioDB";
+import ArchiveButton from "~/components/ArchiveButton";
 
 export default function Home() {
   const [mounted, setMounted] = createSignal(false);
@@ -115,6 +116,12 @@ export default function Home() {
   return (
     <main class="home-root">
       <Title>Search</Title>
+      <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+       <ArchiveButton 
+        archiveMode={showStarredOnly()} 
+        onToggleArchive={() => setShowStarredOnly(!showStarredOnly())}
+       />
+      </div>
       {mounted() ? (
         <Show when={isClient() && isLoaded()} fallback={<div class="loading">Loading recordings...</div>}>
           <For each={groups()} fallback={<div class="muted">No recordings</div>}>
