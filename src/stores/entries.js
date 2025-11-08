@@ -4,6 +4,7 @@ import { getAllAudio } from "~/database/audioDB";
 const [entries, setEntries] = createSignal([]);
 const [isLoaded, setIsLoaded] = createSignal(false);
 const [isClient, setIsClient] = createSignal(false);
+const [showArchived, setShowArchived] = createSignal(false);
 
 if (typeof window !== 'undefined') {
   onMount(async () => {
@@ -20,7 +21,8 @@ if (typeof window !== 'undefined') {
         blobUrl: null,
         dbId: file.id,
         timestamp: file.timestamp,
-        starred: file.starred || false
+        starred: file.starred || false,
+        archived: file.archived || false
       }));
       
       console.log('Mapped entries:', loadedEntries);
@@ -36,4 +38,4 @@ if (typeof window !== 'undefined') {
   setIsLoaded(true);
 }
 
-export { entries, setEntries, isLoaded, isClient };
+export { entries, setEntries, isLoaded, isClient, showArchived, setShowArchived };

@@ -1,7 +1,7 @@
 import { Title } from "@solidjs/meta";
 import { createSignal, For, createMemo, onCleanup, Show, createEffect } from "solid-js";
 import { query } from "~/stores/search";
-import { entries, setEntries, isLoaded, isClient } from "~/stores/entries";
+import { entries, setEntries, isLoaded, isClient, showArchived, setShowArchived } from "~/stores/entries";
 import AudioEntry from "~/components/AudioEntry";
 import { deleteAudioById, updateAudio } from "~/database/audioDB";
 import ArchiveButton from "~/components/ArchiveButton";
@@ -19,17 +19,28 @@ export default function Home() {
     if (!item) return;
     
     try {
-      // Delete from IndexedDB first
-      if (item.dbId) {
-        await deleteAudioById(item.dbId);
+      if (showArchived()) {
+        // Permanently delete from archived items
+        if (item.dbId) {
+          await deleteAudioById(item.dbId);
+        }
+        
+        if (item.blobUrl) {
+          URL.revokeObjectURL(item.blobUrl);
+        }
+       
+        setEntries(entries().filter(e => e.id !== id));
+      } else {
+        // Archive the item (soft delete)
+        if (item.dbId) {
+          await updateAudio(item.dbId, { archived: true });
+        }
+        
+        // Update in-memory state
+        setEntries(entries().map(e => 
+          e.id === id ? { ...e, archived: true } : e
+        ));
       }
-      
-  
-      if (item.blobUrl) {
-        URL.revokeObjectURL(item.blobUrl);
-      }
-     
-      setEntries(entries().filter(e => e.id !== id));
     } catch (error) {
       console.error('Failed to delete recording:', error);
     }
@@ -72,6 +83,25 @@ export default function Home() {
       }
     }
   }
+
+  async function handleRestore(id) {
+    const item = entries().find(e => e.id === id);
+    if (!item) return;
+    
+    try {
+      // Restore from archive (unarchive)
+      if (item.dbId) {
+        await updateAudio(item.dbId, { archived: false });
+      }
+      
+      // Update in-memory state
+      setEntries(entries().map(e => 
+        e.id === id ? { ...e, archived: false } : e
+      ));
+    } catch (error) {
+      console.error('Failed to restore recording:', error);
+    }
+  }
 /*
   const filtered = createMemo(() => {
     if (!isClient()) return [];
@@ -83,6 +113,9 @@ export default function Home() {
   const filtered = createMemo(() => {
   const q = query().trim().toLowerCase();
   let list = entries();
+  
+  // Filter by archive status
+  list = list.filter(e => e.archived === showArchived());
   
   // Apply search filter
   if (q) {
@@ -115,7 +148,7 @@ export default function Home() {
 
   return (
     <main class="home-root">
-      <Title>Search</Title>
+      <Title>{showArchived() ? "Archived Items" : "Search"}</Title>
       <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
        <ArchiveButton 
         archiveMode={showStarredOnly()} 
@@ -124,7 +157,7 @@ export default function Home() {
       </div>
       {mounted() ? (
         <Show when={isClient() && isLoaded()} fallback={<div class="loading">Loading recordings...</div>}>
-          <For each={groups()} fallback={<div class="muted">No recordings</div>}>
+          <For each={groups()} fallback={<div class="muted">{showArchived() ? 'No archived recordings' : 'No recordings'}</div>}>
             {([date, items]) => (
               <section class="date-group">
                 <h3>{date}</h3>
@@ -136,9 +169,12 @@ export default function Home() {
                       blobUrl={entry.blobUrl} 
                       dbId={entry.dbId}
                       starred={entry.starred}
+                      archived={entry.archived}
                       onDelete={handleDelete} 
                       onRename={handleRename}
                       onToggleStar={handleToggleStar}
+                      onRestore={handleRestore}
+                      isArchiveView={showArchived()}
                     />
                   )}
                 </For>

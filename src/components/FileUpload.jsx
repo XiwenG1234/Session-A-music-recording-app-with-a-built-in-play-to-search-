@@ -37,7 +37,8 @@ export default function FileUploadButton() {
           date, 
           blobUrl: null, // Loads blobUrl from IndexedDB
           dbId: dbId,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          archived: false
         }, ...entries()]);
       } catch (error) {
         console.error('Failed to save uploaded file:', error);
@@ -61,7 +62,7 @@ export default function FileUploadButton() {
   };
 
   return (
-    <>
+    <div class="tooltip-wrapper">
       <input
         ref={fileInputRef}
         type="file"
@@ -81,6 +82,7 @@ export default function FileUploadButton() {
           <path d="M12 3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
-    </>
+      <span class="tooltip">Upload Audio Files</span>
+    </div>
   );
 }

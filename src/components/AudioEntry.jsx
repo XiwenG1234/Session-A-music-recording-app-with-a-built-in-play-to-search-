@@ -68,6 +68,11 @@ export default function AudioEntry(props) {
     setOpen(false);
   }
 
+  function handleRestore() {
+    if (props.onRestore) props.onRestore(props.id);
+    setOpen(false);
+  }
+
   // rename feature
   const [editing, setEditing] = createSignal(false);
   const [editValue, setEditValue] = createSignal("");
@@ -134,8 +139,17 @@ export default function AudioEntry(props) {
         <button class="dots-btn" aria-haspopup="true" aria-expanded={open()} onClick={toggleMenu} aria-label="options">⋯</button>
         {open() && (
           <div class="entry-menu" role="menu">
-            <button class="menu-item" onClick={startRename} role="menuitem">Rename</button>
-            <button class="menu-item" onClick={handleDelete} role="menuitem">Delete</button>
+            {props.isArchiveView ? (
+              <>
+                <button class="menu-item" onClick={handleRestore} role="menuitem">Restore</button>
+                <button class="menu-item delete-permanently" onClick={handleDelete} role="menuitem">Delete Permanently</button>
+              </>
+            ) : (
+              <>
+                <button class="menu-item" onClick={startRename} role="menuitem">Rename</button>
+                <button class="menu-item" onClick={handleDelete} role="menuitem">Archive</button>
+              </>
+            )}
           </div>
         )}
       </div>
