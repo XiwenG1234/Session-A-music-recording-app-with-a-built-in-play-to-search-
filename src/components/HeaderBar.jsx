@@ -46,7 +46,7 @@ export default function HeaderBar() {
           <button 
             class={`archive-header-btn ${showArchived() ? 'active' : ''}`}
             onClick={() => setShowArchived(!showArchived())}
-            aria-label={showArchived() ? "Back to recordings" : "View archived items"}
+            aria-label={showArchived() ? "Back to recordings" : "View recently deleted items"}
           >
             {showArchived() ? (
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
@@ -59,11 +59,11 @@ export default function HeaderBar() {
                   <path d="M1 3h22v5H1z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M10 12h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                <span>Archived</span>
+                <span>Recently Deleted</span>
               </>
             )}
           </button>
-          <span class="tooltip">Archived Files</span>
+          <span class="tooltip">Recently Deleted Files</span>
         </div>
       </div>
     </div>

@@ -318,7 +318,7 @@ export default function AudioEntry(props) {
                 <>
                   <button class="menu-item" onClick={startRename} role="menuitem">Rename</button>
                   <button class="menu-item" onClick={handleCut} role="menuitem">Cut</button>
-                  <button class="menu-item" onClick={handleDelete} role="menuitem">Archive</button>
+                  <button class="menu-item" onClick={handleDelete} role="menuitem">Delete</button>
                 </>
               )}
             </div>

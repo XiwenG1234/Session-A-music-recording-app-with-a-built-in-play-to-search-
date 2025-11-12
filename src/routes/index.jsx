@@ -148,7 +148,7 @@ export default function Home() {
 
   return (
     <main class="home-root">
-      <Title>{showArchived() ? "Archived Items" : "Search"}</Title>
+      <Title>{showArchived() ? "Recently Deleted Items" : "Search"}</Title>
       <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
        <ArchiveButton 
         archiveMode={showStarredOnly()} 
@@ -157,7 +157,7 @@ export default function Home() {
       </div>
       {mounted() ? (
         <Show when={isClient() && isLoaded()} fallback={<div class="loading">Loading recordings...</div>}>
-          <For each={groups()} fallback={<div class="muted">{showArchived() ? 'No archived recordings' : 'No recordings'}</div>}>
+          <For each={groups()} fallback={<div class="muted">{showArchived() ? 'No recently deleted recordings' : 'No recordings'}</div>}>
             {([date, items]) => (
               <section class="date-group">
                 <h3>{date}</h3>
