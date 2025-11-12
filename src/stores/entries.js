@@ -1,5 +1,5 @@
 import { createSignal, onMount } from "solid-js";
-import { getAllAudio } from "~/database/audioDB";
+import { getAllAudio, initSessionDB } from "~/database";
 
 const [entries, setEntries] = createSignal([]);
 const [isLoaded, setIsLoaded] = createSignal(false);
@@ -10,10 +10,14 @@ if (typeof window !== 'undefined') {
   onMount(async () => {
     setIsClient(true);
     try {
-      console.log('Loading recordings from IndexedDB...');
+      console.log('Initializing sessionDB service worker...');
+      await initSessionDB();
+      console.log('SessionDB initialized');
+
+      console.log('Loading recordings from SessionDB...');
       const audioFiles = await getAllAudio();
-      console.log('Retrieved', audioFiles.length, 'recordings from IndexedDB:', audioFiles);
-      
+      console.log('Retrieved', audioFiles.length, 'recordings from SessionDB:', audioFiles);
+
       const loadedEntries = audioFiles.map(file => ({
         id: file.id,
         title: file.name || `Recording ${new Date(file.timestamp).toLocaleTimeString()}`,
@@ -24,7 +28,7 @@ if (typeof window !== 'undefined') {
         starred: file.starred || false,
         archived: file.archived || false
       }));
-      
+
       console.log('Mapped entries:', loadedEntries);
       setEntries(loadedEntries);
       setIsLoaded(true);

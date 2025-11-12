@@ -3,7 +3,7 @@ import { createSignal, For, createMemo, onCleanup, Show, createEffect } from "so
 import { query } from "~/stores/search";
 import { entries, setEntries, isLoaded, isClient, showArchived, setShowArchived } from "~/stores/entries";
 import AudioEntry from "~/components/AudioEntry";
-import { deleteAudioById, updateAudio } from "~/database/audioDB";
+import { deleteAudioById, updateAudio } from "~/database";
 import ArchiveButton from "~/components/ArchiveButton";
 
 export default function Home() {

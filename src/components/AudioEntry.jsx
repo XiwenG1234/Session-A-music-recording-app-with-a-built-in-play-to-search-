@@ -160,7 +160,7 @@ export default function AudioEntry(props) {
 */
 
 import { createSignal, onMount, onCleanup, createMemo, Show } from "solid-js";
-import { getAudioById } from "~/database/audioDB";
+import { getAudioById } from "~/database";
 import AudioCutter from "~/components/AudioCutter";
 
 export default function AudioEntry(props) {

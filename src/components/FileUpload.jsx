@@ -1,6 +1,6 @@
 import { entries, setEntries } from "~/stores/entries";
 import { addToast } from "~/stores/toast";
-import { addAudio } from "~/database/audioDB";
+import { addAudio } from "~/database";
 
 export default function FileUploadButton() {
   let fileInputRef;

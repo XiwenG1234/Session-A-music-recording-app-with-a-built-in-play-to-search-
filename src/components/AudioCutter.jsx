@@ -1,5 +1,5 @@
 import { createSignal, Show } from "solid-js";
-import { addAudio } from "~/database/audioDB";
+import { addAudio } from "~/database";
 import { entries, setEntries } from "~/stores/entries";
 
 export default function AudioCutter(props) {
@@ -55,7 +55,7 @@ export default function AudioCutter(props) {
       
       // If no blobUrl provided, we need to fetch it from the database
       if (!blobUrl && props.dbId) {
-        const { getAudioById } = await import("~/database/audioDB");
+        const { getAudioById } = await import("~/database");
         const audioData = await getAudioById(props.dbId);
         if (audioData && audioData.blob) {
           blobUrl = URL.createObjectURL(audioData.blob);

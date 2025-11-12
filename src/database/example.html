@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SessionDB Play-to-Search Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+
+    .card h2 {
+      margin-bottom: 16px;
+      color: #667eea;
+      font-size: 1.5rem;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #e0e7ff;
+      color: #667eea;
+    }
+
+    .btn-danger {
+      background: #fee;
+      color: #c33;
+    }
+
+    .btn-recording {
+      background: #ff4444;
+      color: white;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .status {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    .status.info {
+      background: #e0e7ff;
+      color: #667eea;
+    }
+
+    .status.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status.warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .recordings-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .recording-item {
+      padding: 16px;
+      background: #f9fafb;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .recording-item:hover {
+      background: #f3f4f6;
+      transform: translateX(4px);
+    }
+
+    .recording-info {
+      flex: 1;
+    }
+
+    .recording-name {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .recording-time {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .recording-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .recording-actions button {
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+
+    .search-results {
+      display: grid;
+      gap: 16px;
+    }
+
+    .match-item {
+      padding: 20px;
+      background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+      border-radius: 8px;
+      border-left: 4px solid #10b981;
+    }
+
+    .match-item h3 {
+      color: #065f46;
+      margin-bottom: 8px;
+    }
+
+    .match-detail {
+      font-size: 0.875rem;
+      margin: 4px 0;
+      color: #047857;
+    }
+
+    .match-score {
+      font-weight: 600;
+      color: #059669;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #6b7280;
+    }
+
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .file-upload-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: #e0e7ff;
+      color: #667eea;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .file-upload-label:hover {
+      background: #c7d2fe;
+      transform: translateY(-2px);
+    }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎵 Play-to-Search Demo</h1>
+
+    <!-- Recording Section -->
+    <div class="card">
+      <h2>📼 Record Audio</h2>
+      <div id="record-status" class="status info">Ready to record</div>
+      <div class="button-group">
+        <button id="record-btn" class="btn-primary">
+          <span>🎙️</span>
+          <span id="record-text">Start Recording</span>
+        </button>
+        <label class="file-upload-label">
+          <span>📁</span>
+          <span>Upload Audio File</span>
+          <input type="file" id="file-upload" accept="audio/*">
+        </label>
+      </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="card">
+      <h2>🔍 Play-to-Search</h2>
+      <div id="search-status" class="status info">Not searching</div>
+      <div class="button-group">
+        <button id="search-btn" class="btn-primary">
+          <span>🎤</span>
+          <span id="search-text">Start Listening</span>
+        </button>
+        <label class="file-upload-label">
+          <span>🔎</span>
+          <span>Search with File</span>
+          <input type="file" id="search-file" accept="audio/*">
+        </label>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+
+    <!-- Recordings List -->
+    <div class="card">
+      <h2>📚 Your Recordings</h2>
+      <div id="recordings-list" class="recordings-list">
+        <div class="empty-state">
+          <div class="loading"></div>
+          <p>Loading recordings...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import {
+      initSessionDB,
+      addAudio,
+      getAllAudio,
+      getAudioById,
+      deleteAudioById,
+      searchAudio,
+      searchAudioStream
+    } from './index.js';
+
+    class PlayToSearchDemo {
+      constructor() {
+        this.isRecording = false;
+        this.isSearching = false;
+        this.mediaRecorder = null;
+        this.searchController = null;
+        this.stream = null;
+      }
+
+      async init() {
+        try {
+          // Initialize service worker
+          await initSessionDB();
+          this.updateStatus('record-status', 'Ready to record', 'info');
+          this.updateStatus('search-status', 'Ready to search', 'info');
+
+          // Load recordings
+          await this.loadRecordings();
+
+          // Setup event listeners
+          this.setupEventListeners();
+        } catch (error) {
+          console.error('Initialization error:', error);
+          alert('Failed to initialize: ' + error.message);
+        }
+      }
+
+      setupEventListeners() {
+        document.getElementById('record-btn').addEventListener('click', () => {
+          this.toggleRecording();
+        });
+
+        document.getElementById('search-btn').addEventListener('click', () => {
+          this.toggleSearch();
+        });
+
+        document.getElementById('file-upload').addEventListener('change', (e) => {
+          this.handleFileUpload(e);
+        });
+
+        document.getElementById('search-file').addEventListener('change', (e) => {
+          this.handleSearchFile(e);
+        });
+      }
+
+      updateStatus(elementId, message, type) {
+        const element = document.getElementById(elementId);
+        element.textContent = message;
+        element.className = `status ${type}`;
+      }
+
+      async loadRecordings() {
+        try {
+          const recordings = await getAllAudio();
+          const listElement = document.getElementById('recordings-list');
+
+          if (recordings.length === 0) {
+            listElement.innerHTML = `
+              <div class="empty-state">
+                <p>No recordings yet. Start recording or upload a file!</p>
+              </div>
+            `;
+            return;
+          }
+
+          listElement.innerHTML = recordings.map(recording => `
+            <div class="recording-item" data-id="${recording.id}">
+              <div class="recording-info">
+                <div class="recording-name">${recording.name}</div>
+                <div class="recording-time">${new Date(recording.timestamp).toLocaleString()}</div>
+              </div>
+              <div class="recording-actions">
+                <button class="btn-secondary play-btn" data-id="${recording.id}">▶️ Play</button>
+                <button class="btn-danger delete-btn" data-id="${recording.id}">🗑️ Delete</button>
+              </div>
+            </div>
+          `).join('');
+
+          // Add event listeners for play and delete buttons
+          listElement.querySelectorAll('.play-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => this.playRecording(e.target.dataset.id));
+          });
+
+          listElement.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => this.deleteRecording(e.target.dataset.id));
+          });
+        } catch (error) {
+          console.error('Error loading recordings:', error);
+        }
+      }
+
+      async toggleRecording() {
+        if (this.isRecording) {
+          this.mediaRecorder.stop();
+          this.isRecording = false;
+          document.getElementById('record-text').textContent = 'Start Recording';
+          document.getElementById('record-btn').classList.remove('btn-recording');
+          document.getElementById('record-btn').classList.add('btn-primary');
+          return;
+        }
+
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          this.mediaRecorder = new MediaRecorder(stream);
+          const chunks = [];
+
+          this.mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+          this.mediaRecorder.onstop = async () => {
+            const blob = new Blob(chunks, { type: 'audio/webm' });
+            const name = prompt('Name this recording:', 'Recording ' + new Date().toLocaleTimeString());
+
+            if (name) {
+              this.updateStatus('record-status', 'Saving recording...', 'info');
+              try {
+                await addAudio({
+                  blob: blob,
+                  name: name,
+                  indexed: true
+                });
+                this.updateStatus('record-status', 'Recording saved!', 'success');
+                await this.loadRecordings();
+              } catch (error) {
+                this.updateStatus('record-status', 'Failed to save: ' + error.message, 'warning');
+              }
+            }
+
+            stream.getTracks().forEach(track => track.stop());
+            this.updateStatus('record-status', 'Ready to record', 'info');
+          };
+
+          this.mediaRecorder.start();
+          this.isRecording = true;
+          document.getElementById('record-text').textContent = 'Stop Recording';
+          document.getElementById('record-btn').classList.remove('btn-primary');
+          document.getElementById('record-btn').classList.add('btn-recording');
+          this.updateStatus('record-status', '🔴 Recording...', 'warning');
+        } catch (error) {
+          alert('Failed to access microphone: ' + error.message);
+        }
+      }
+
+      async toggleSearch() {
+        if (this.isSearching) {
+          // Stop recording and perform search
+          this.updateStatus('search-status', 'Searching...', 'info');
+
+          try {
+            if (this.searchController) {
+              const results = await this.searchController.stop();
+              this.searchController = null;
+
+              // Display results
+              if (results && results.length > 0) {
+                this.displaySearchResults(results);
+                this.updateStatus('search-status', `Found ${results.length} match(es)!`, 'success');
+              } else {
+                this.updateStatus('search-status', 'No matches found', 'info');
+              }
+            }
+          } catch (error) {
+            console.error('Search error:', error);
+            this.updateStatus('search-status', 'Search failed', 'warning');
+          }
+
+          if (this.stream) {
+            this.stream.getTracks().forEach(track => track.stop());
+            this.stream = null;
+          }
+
+          this.isSearching = false;
+          document.getElementById('search-text').textContent = 'Start Listening';
+          document.getElementById('search-btn').classList.remove('btn-recording');
+          document.getElementById('search-btn').classList.add('btn-primary');
+          return;
+        }
+
+        // Start recording
+        try {
+          this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          this.isSearching = true;
+          document.getElementById('search-text').textContent = 'Stop & Search';
+          document.getElementById('search-btn').classList.remove('btn-primary');
+          document.getElementById('search-btn').classList.add('btn-recording');
+          this.updateStatus('search-status', '🎤 Recording... (stop to search)', 'warning');
+
+          this.searchController = await searchAudioStream(
+            this.stream,
+            {
+              maxDuration: 30  // Max 30 seconds
+            }
+          );
+        } catch (error) {
+          alert('Failed to access microphone: ' + error.message);
+          this.isSearching = false;
+          document.getElementById('search-text').textContent = 'Start Listening';
+          this.updateStatus('search-status', 'Ready to search', 'info');
+        }
+      }
+
+      async handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        this.updateStatus('record-status', 'Processing file...', 'info');
+        try {
+          await addAudio({
+            blob: file,
+            name: file.name,
+            indexed: true
+          });
+          this.updateStatus('record-status', 'File added successfully!', 'success');
+          await this.loadRecordings();
+          setTimeout(() => {
+            this.updateStatus('record-status', 'Ready to record', 'info');
+          }, 2000);
+        } catch (error) {
+          this.updateStatus('record-status', 'Failed to add file: ' + error.message, 'warning');
+        }
+        event.target.value = '';
+      }
+
+      async handleSearchFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        this.updateStatus('search-status', 'Searching...', 'info');
+        try {
+          const results = await searchAudio(file);
+          this.displaySearchResults(results);
+          if (results.length > 0) {
+            this.updateStatus('search-status', `Found ${results.length} match(es)!`, 'success');
+          } else {
+            this.updateStatus('search-status', 'No matches found', 'info');
+          }
+        } catch (error) {
+          this.updateStatus('search-status', 'Search failed: ' + error.message, 'warning');
+        }
+        event.target.value = '';
+      }
+
+      displaySearchResults(results) {
+        const resultsElement = document.getElementById('search-results');
+
+        if (results.length === 0) {
+          resultsElement.innerHTML = '<div class="empty-state"><p>No matches found</p></div>';
+          return;
+        }
+
+        resultsElement.innerHTML = results.map(result => `
+          <div class="match-item">
+            <h3>🎯 ${result.name}</h3>
+            <div class="match-detail">Score: <span class="match-score">${result.score.toFixed(3)}</span></div>
+            <div class="match-detail">Match time: ${result.keyStart.toFixed(2)}s - ${result.keyEnd.toFixed(2)}s</div>
+            <div class="match-detail">Duration: ${(result.keyEnd - result.keyStart).toFixed(2)}s</div>
+          </div>
+        `).join('');
+      }
+
+      async playRecording(id) {
+        try {
+          const audio = await getAudioById(id);
+          if (audio) {
+            const audioUrl = URL.createObjectURL(audio.blob);
+            const audioElement = new Audio(audioUrl);
+            audioElement.play();
+          }
+        } catch (error) {
+          alert('Failed to play recording: ' + error.message);
+        }
+      }
+
+      async deleteRecording(id) {
+        if (!confirm('Are you sure you want to delete this recording?')) {
+          return;
+        }
+
+        try {
+          await deleteAudioById(id);
+          await this.loadRecordings();
+        } catch (error) {
+          alert('Failed to delete recording: ' + error.message);
+        }
+      }
+    }
+
+    // Initialize the demo
+    const demo = new PlayToSearchDemo();
+    demo.init();
+  </script>
+</body>
+</html>
