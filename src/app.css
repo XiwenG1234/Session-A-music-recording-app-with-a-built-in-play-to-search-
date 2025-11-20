@@ -47,10 +47,11 @@ html, body, #root {
 }
 
 .three-sections-root {
-  height: 100vh;
   display: flex;
   flex-direction: column;
+  height: 100vh;
   width: 100%;
+  overflow: hidden;
 }
 
 .section {
@@ -63,6 +64,7 @@ html, body, #root {
 }
 
 .section.top {
+  flex-shrink: 0;
   height: 80px;
   background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
   padding: 0 1.5rem;
@@ -83,6 +85,9 @@ html, body, #root {
   width: 100vw; /* ensure full-bleed across viewport */
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .middle-inner {
@@ -99,6 +104,7 @@ html, body, #root {
   align-items: center;
   justify-content: center;
   box-shadow: 0 -4px 20px rgba(59, 130, 246, 0.25);
+  flex-shrink: 0;
 }
 
 .top-links a {
