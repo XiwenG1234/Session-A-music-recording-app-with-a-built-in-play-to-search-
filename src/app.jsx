@@ -7,6 +7,7 @@ import ThreeSections from "./components/ThreeSections";
 import HeaderBar from "./components/HeaderBar";
 import RecorderButton from "./components/RecorderButton";
 import Toasts from "./components/Toasts";
+import SearchResultsModal from "./components/SearchResultsModal";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
             </div>
           </ThreeSections>
           <Toasts />
+          <SearchResultsModal />
         </MetaProvider>
       )}
     >

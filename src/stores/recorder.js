@@ -168,4 +168,4 @@ export async function stopSearch() {
   }
 }
 
-export { isRecording, duration, lastBlobUrl, isSearching, searchDuration, searchResults };
+export { isRecording, duration, lastBlobUrl, isSearching, searchDuration, searchResults, setSearchResults };
